@@ -14,6 +14,9 @@ app.use(bodyParser.json());
 app.get("/scanning/", key_scanning);
 app.post("/device/", device_data_handling);
 app.post("/bluetooth/", bluetooth_data_handling);
+app.all("*", (req, res) => {
+  res.status(404).send("NOT FOUND");
+});
 
 app.listen(port, () => {
     console.log('CIMA API RUNNING IN PORT: ' + port);
