@@ -8,16 +8,9 @@ const { device_data_handling } = require('./routes/device');
 const { bluetooth_data_handling } = require('./routes/bluetooth');
 const { wsRequest } = require('./routes/wsHandler');
 
-const server = http.createServer((request, response) => {});
-server.listen(1337, () => {
-  console.log("WEBSOCKETSERVER RUNNING IN PORT: " + 1337);
-});
-const wsServer = new WebSocketServer({
-  httpServer: server
-});
-
 const app = express();
 const port = 8090;
+const server = http.createServer(app);
 
 app.set('port', process.env.port || port);
 app.use(bodyParser.urlencoded({
@@ -32,8 +25,12 @@ app.all("*", (req, res) => {
   res.status(404).send("NOT FOUND");
 });
 
-wsServer.on("request", wsRequest);
-
-app.listen(port, () => {
-    console.log('CIMA API RUNNING IN PORT: ' + port);
+server.listen(process.env.port || port, () => {
+  console.log("WEBSOCKET SERVER AND HTTP SERVER RUNNING IN PORT: " + process.env.port || port);
 });
+const wsServer = new WebSocketServer({
+  httpServer: server,
+  path: "/connectws/"
+});
+
+wsServer.on("request", wsRequest);
